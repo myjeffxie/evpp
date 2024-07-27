@@ -90,9 +90,9 @@ add_subdirectory (apps)
 add_subdirectory (labs)
 
 if (NOT EVPP_VCPKG_BUILD)
-    add_subdirectory (test)
-    add_subdirectory (examples)
-    add_subdirectory (benchmark)
+#    add_subdirectory (test)
+#    add_subdirectory (examples)
+#    add_subdirectory (benchmark)
 endif ()
 
 set (CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")

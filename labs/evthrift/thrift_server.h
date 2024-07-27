@@ -20,7 +20,7 @@ using apache::thrift::transport::TTransportFactory;
 class ThriftServer : public TServer {
 public:
     template <typename Processor>
-    ThriftServer(const boost::shared_ptr<Processor>& processor, // or TProcessorFactory
+    ThriftServer(const std::shared_ptr<Processor>& processor, // or TProcessorFactory
                     evpp::EventLoop* eventloop,
                     const std::string& listen_addr/*ip:port*/,
                     const std::string& name,
@@ -32,8 +32,8 @@ public:
     }
 
     template <typename Processor>
-    ThriftServer(const boost::shared_ptr<Processor>& processor, // or TProcessorFactory
-                    const boost::shared_ptr<TServerTransport>& transport,
+    ThriftServer(const std::shared_ptr<Processor>& processor, // or TProcessorFactory
+                    const std::shared_ptr<TServerTransport>& transport,
                     evpp::EventLoop* eventloop,
                     const std::string& listen_addr/*ip:port*/,
                     const std::string& name,
@@ -45,10 +45,10 @@ public:
     }
 
     template <typename Processor>
-    ThriftServer(const boost::shared_ptr<Processor>& processor,
-                 const boost::shared_ptr<TServerTransport>& serverTransport,
-                 const boost::shared_ptr<TTransportFactory>& transportFactory,
-                 const boost::shared_ptr<TProtocolFactory>& protocolFactory,
+    ThriftServer(const std::shared_ptr<Processor>& processor,
+                 const std::shared_ptr<TServerTransport>& serverTransport,
+                 const std::shared_ptr<TTransportFactory>& transportFactory,
+                 const std::shared_ptr<TProtocolFactory>& protocolFactory,
                     evpp::EventLoop* eventloop,
                     const std::string& listen_addr/*ip:port*/,
                     const std::string& name,
@@ -60,12 +60,12 @@ public:
     }
 
     template <typename Processor>
-    ThriftServer(const boost::shared_ptr<Processor>& processor,
-                 const boost::shared_ptr<TServerTransport>& serverTransport,
-                 const boost::shared_ptr<TTransportFactory>& inputTransportFactory,
-                 const boost::shared_ptr<TTransportFactory>& outputTransportFactory,
-                 const boost::shared_ptr<TProtocolFactory>& inputProtocolFactory,
-                 const boost::shared_ptr<TProtocolFactory>& outputProtocolFactory,
+    ThriftServer(const std::shared_ptr<Processor>& processor,
+                 const std::shared_ptr<TServerTransport>& serverTransport,
+                 const std::shared_ptr<TTransportFactory>& inputTransportFactory,
+                 const std::shared_ptr<TTransportFactory>& outputTransportFactory,
+                 const std::shared_ptr<TProtocolFactory>& inputProtocolFactory,
+                 const std::shared_ptr<TProtocolFactory>& outputProtocolFactory,
                     evpp::EventLoop* eventloop,
                     const std::string& listen_addr/*ip:port*/,
                     const std::string& name,

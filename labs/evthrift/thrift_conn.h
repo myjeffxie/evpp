@@ -41,18 +41,18 @@ private:
     ThriftServer* server_;
     evpp::TCPConnPtr conn_;
 
-    boost::shared_ptr<TNullTransport> nullTransport_;
+    std::shared_ptr<TNullTransport> nullTransport_;
 
-    boost::shared_ptr<TMemoryBuffer> inputTransport_;
-    boost::shared_ptr<TMemoryBuffer> outputTransport_;
+    std::shared_ptr<TMemoryBuffer> inputTransport_;
+    std::shared_ptr<TMemoryBuffer> outputTransport_;
 
-    boost::shared_ptr<TTransport> factoryInputTransport_;
-    boost::shared_ptr<TTransport> factoryOutputTransport_;
+    std::shared_ptr<TTransport> factoryInputTransport_;
+    std::shared_ptr<TTransport> factoryOutputTransport_;
 
-    boost::shared_ptr<TProtocol> inputProtocol_;
-    boost::shared_ptr<TProtocol> outputProtocol_;
+    std::shared_ptr<TProtocol> inputProtocol_;
+    std::shared_ptr<TProtocol> outputProtocol_;
 
-    boost::shared_ptr<TProcessor> processor_;
+    std::shared_ptr<TProcessor> processor_;
 
     enum State state_;
     uint32_t frameSize_;

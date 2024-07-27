@@ -10,6 +10,39 @@
 #include <algorithm>
 
 namespace evpp {
+
+#if defined(__i386__)||defined(WIN32)||defined(__x86_64__)
+
+#define XHTONS
+#define XHTONL
+#define XHTONLL
+
+#else
+
+	inline uint16_t XHTONS(uint16_t i16) {
+			return ((i16 << 8) | (i16 >> 8));
+	}
+	inline uint32_t XHTONL(uint32_t i32) {
+			return ((uint32_t(XHTONS(i32)) << 16) | XHTONS(i32>>16));
+	}
+	inline uint64_t XHTONLL(uint64_t i64) {
+			return ((uint64_t(XHTONL((uint32_t)i64)) << 32) |XHTONL((uint32_t(i64>>32))));
+	}
+
+#endif
+
+#define XNTOHS XHTONS
+#define XNTOHL XHTONL
+#define XNTOHLL XHTONLL
+
+static uint16_t xntohs(uint16_t i16) { return XNTOHS(i16); }
+static uint32_t xntohl(uint32_t i32) { return XNTOHL(i32); }
+static uint64_t xntohll(uint64_t i64) { return XNTOHLL(i64); }
+
+static uint16_t xhtons(uint16_t i16) { return XHTONS(i16); }
+static uint32_t xhtonl(uint32_t i32) { return XHTONL(i32); }
+static uint64_t xhtonll(uint64_t i64) { return XHTONLL(i64); }
+
 class EVPP_EXPORT Buffer {
 public:
     static const size_t kCheapPrependSize;
@@ -24,6 +57,7 @@ public:
         assert(length() == 0);
         assert(WritableBytes() == initial_size);
         assert(PrependableBytes() == reserved_prepend_size);
+        is_little_endian_ = false;
     }
 
     ~Buffer() {
@@ -31,6 +65,10 @@ public:
         buffer_ = nullptr;
         capacity_ = 0;
     }
+
+	void setLittleEndian(bool value) {
+        is_little_endian_ = true;
+	}
 
     void Swap(Buffer& rhs) {
         std::swap(buffer_, rhs.buffer_);
@@ -136,17 +174,35 @@ public:
 
     // Append int64_t/int32_t/int16_t with network endian
     void AppendInt64(int64_t x) {
-        int64_t be = evppbswap_64(x);
+        int64_t be = 0;
+		if(is_little_endian_) {
+			be = xhtonll(x);
+		}
+		else {
+			be = evppbswap_64(x);
+		}
         Write(&be, sizeof be);
     }
 
     void AppendInt32(int32_t x) {
-        int32_t be32 = htonl(x);
+        int32_t be32 = 0;
+		if(is_little_endian_) {
+			be32 = xhtonl(x);
+		}
+		else {
+			be32 = htonl(x);
+		}
         Write(&be32, sizeof be32);
     }
 
     void AppendInt16(int16_t x) {
-        int16_t be16 = htons(x);
+        int16_t be16 = 0;
+		if(is_little_endian_) {
+			be16 = xhtons(x);
+		}
+		else {
+			be16 = htons(x);
+		}
         Write(&be16, sizeof be16);
     }
 
@@ -156,17 +212,35 @@ public:
 
     // Prepend int64_t/int32_t/int16_t with network endian
     void PrependInt64(int64_t x) {
-        int64_t be = evppbswap_64(x);
+        int64_t be = 0;
+		if(is_little_endian_) {
+			be = xhtonll(x);
+		}
+		else {
+			be = evppbswap_64(x);
+		}
         Prepend(&be, sizeof be);
     }
 
     void PrependInt32(int32_t x) {
-        int32_t be32 = htonl(x);
+        int32_t be32 = 0;
+		if(is_little_endian_) {
+			be32 = xhtonl(x);
+		}
+		else {
+			be32 = htonl(x);
+		}
         Prepend(&be32, sizeof be32);
     }
 
     void PrependInt16(int16_t x) {
-        int16_t be16 = htons(x);
+        int16_t be16 = 0;
+		if(is_little_endian_) {
+			be16 = xhtons(x);
+		}
+		else {
+			be16 = htons(x);
+		}
         Prepend(&be16, sizeof be16);
     }
 
@@ -296,21 +370,36 @@ public:
         assert(length() >= sizeof(int64_t));
         int64_t be64 = 0;
         ::memcpy(&be64, data(), sizeof be64);
-        return evppbswap_64(be64);
+		if(is_little_endian_) {
+			return xntohll(be64);
+		}
+		else {
+			return evppbswap_64(be64);
+		}
     }
 
     int32_t PeekInt32() const {
         assert(length() >= sizeof(int32_t));
         int32_t be32 = 0;
         ::memcpy(&be32, data(), sizeof be32);
-        return ntohl(be32);
+		if(is_little_endian_) {
+			return xntohl(be32);
+		}
+		else {
+			return ntohl(be32);
+		}
     }
 
     int16_t PeekInt16() const {
         assert(length() >= sizeof(int16_t));
         int16_t be16 = 0;
         ::memcpy(&be16, data(), sizeof be16);
-        return ntohs(be16);
+		if(is_little_endian_) {
+			return xntohs(be16);
+		}
+		else {
+			return ntohs(be16);
+		}
     }
 
     int8_t PeekInt8() const {
@@ -429,6 +518,7 @@ private:
     size_t read_index_;
     size_t write_index_;
     size_t reserved_prepend_size_;
+	bool   is_little_endian_;
     static const char kCRLF[];
 };
 

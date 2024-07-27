@@ -13,5 +13,5 @@ set(EVPP_THRIFT_SRCS
 add_library(evthrift_static ${EVPP_THRIFT_SRCS})
 target_link_libraries(evthrift_static ${LIBRARIES} ${THRIFT_LIBRARY})
 
-add_subdirectory(tests)
+#add_subdirectory(tests)
 

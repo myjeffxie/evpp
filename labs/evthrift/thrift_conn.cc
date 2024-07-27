@@ -83,9 +83,23 @@ void ThriftConn::Process() {
 }
 
 void ThriftConn::Close() {
-    nullTransport_->close();
-    factoryInputTransport_->close();
-    factoryOutputTransport_->close();
+    try {
+        uint64_t cid = 0;
+        if(conn_) {
+            conn_->Close();
+            cid = conn_->id();            
+        }
+
+        //nullTransport_->close();
+        factoryInputTransport_->close();
+        factoryOutputTransport_->close();        
+
+        LOG_INFO << "ThriftConn Close, cid:" << cid;
+    } catch (const std::exception& ex) {
+        LOG_ERROR << "ThriftConn Close std::exception: " << ex.what();
+    } catch (...) {
+        LOG_ERROR << "ThriftConn Close unknown exception";
+    }    
 }
 
 }
